@@ -12,6 +12,6 @@ jobs:
           iteration-data: tests/inputData.csv 
 
 workflows:
-  example-workflow:
+  newman-workflow:
     jobs:
-      - example-job
+      - newman-collection-run
