@@ -10,3 +10,4 @@ jobs:
           collection: tests/collection.json
           environment: tests/environment.json
           iteration-data: tests/inputData.csv
+
