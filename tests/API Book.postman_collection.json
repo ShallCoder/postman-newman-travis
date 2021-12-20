@@ -1,0 +1,407 @@
+{
+	"info": {
+		"_postman_id": "6d6d9aa0-4c8f-4eb0-90fd-bbf4f28507a0",
+		"name": "API Book",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Star Wars",
+			"item": [
+				{
+					"name": "Planets",
+					"item": [
+						{
+							"name": "Get Homeworld",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json();\r",
+											"var planetResidents = jsonData.residents;\r",
+											"pm.collectionVariables.set(\"residentList\", planetResidents);\r",
+											"pm.environment.set(\"counter\", 0);\r",
+											"postman.setNextRequest(\"Get Person Details Loop\");"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/planets/1",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"planets",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "People",
+					"item": [
+						{
+							"name": "Get All People",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "edgegrid"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/people",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"people"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Person Details",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body matches string\", function () {\r",
+											"   pm.expect(pm.response.text()).to.include(\"Luke Skywalker\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Your test name\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    console.log(jsonData);\r",
+											"    pm.expect(jsonData.name).to.eql(\"Luke Skywalker\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Content-Type is present\", function () {\r",
+											"    pm.response.to.have.header(\"Content-Type\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var residentList = pm.collectionVariables.get('residentList');\r",
+											"console.log(residentList);\r",
+											"\r",
+											"var randomResident = residentList[Math.floor(Math.random() * residentList.length)];\r",
+											"var splitResidentStr = randomResident.split('/');\r",
+											"var personId = splitResidentStr[splitResidentStr.length - 2];\r",
+											"pm.environment.set(\"peopleId\", personId);\r",
+											"\r",
+											"\r",
+											"postman.setNextRequest(\"Get Homeworld\");"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/people/{{peopleId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"people",
+										"{{peopleId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Person Details Loop",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var residentList = pm.collectionVariables.get(\"residentList\");\r",
+											"\r",
+											"var currentCount = pm.environment.get(\"counter\") || 0;\r",
+											"console.log(residentList.length);\r",
+											"console.log(currentCount);\r",
+											"if (currentCount < residentList.length) {\r",
+											"    randomResident = residentList[currentCount];\r",
+											"    var splitResidentStr = randomResident.split('/');\r",
+											"    var personId = splitResidentStr[splitResidentStr.\r",
+											" length - 2];\r",
+											"    pm.environment.set(\"peopleId\", personId);\r",
+											"    pm.environment.set(\"counter\",currentCount+1);\r",
+											"    postman.setNextRequest(\"Get Person Details Loop\");\r",
+											"};"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/people/{{peopleId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"people",
+										"{{peopleId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"peopleId\", \"4\");",
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Films",
+					"item": [
+						{
+							"name": "https://swapi.dev/api/films/1/",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/films/1/",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"films",
+										"1",
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Starships",
+					"item": []
+				},
+				{
+					"name": "Vehicles",
+					"item": []
+				},
+				{
+					"name": "Species",
+					"item": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.set(\"peopleId\", \"3\");",
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "JSON API",
+			"item": [
+				{
+					"name": "Users",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Validate Email Address From File\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    var expectedEmail = pm.variables.replaceIn(\"{{expectedEmail}}\");\r",
+									"    pm.expect(jsonData.email).to.eql(expectedEmail);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://jsonplaceholder.typicode.com/users/{{userId}}",
+							"protocol": "http",
+							"host": [
+								"jsonplaceholder",
+								"typicode",
+								"com"
+							],
+							"path": [
+								"users",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Check for @ in email\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.email).to.contain(\"@\");",
+							"});"
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Newman Test",
+			"item": [
+				{
+					"name": "Test GET",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://postman-echo.com/get?test=true",
+							"protocol": "https",
+							"host": [
+								"postman-echo",
+								"com"
+							],
+							"path": [
+								"get"
+							],
+							"query": [
+								{
+									"key": "test",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://swapi.dev/api"
+		},
+		{
+			"key": "residentList",
+			"value": ""
+		}
+	]
+}
