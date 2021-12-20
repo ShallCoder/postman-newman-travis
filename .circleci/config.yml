@@ -2,11 +2,10 @@ version: 2.1
 orbs:
   newman: postman/newman@0.0.2
 jobs:
-  example-job:
-    docker:
-      # replace with your preferred image
-      - image: cimg/base:stable
+  newman-collection-run:
+    executor: newman/postman-newman-docker
     steps:
+      - checkout
       - newman/newman-run:
           collection: tests/collection.json 
           environment: tests/environment.json 
